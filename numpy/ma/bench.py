@@ -83,6 +83,22 @@ def compare_methods(methodname, args, vars='x', nloop=500, test=True,
     return
 
 
+def compare_nonma_ma_methods(methodname, args, vars='x', nloop=1000, test=True,
+                             xs=xs, nmxs=nmxs, xl=xl, nmxl=nmxl):
+    print("-"*50)
+    for ident, varprefix in [('masked', 'nm'), ('normal', '')]:
+        print("%s on small %s arrays" % (methodname, ident))
+        data, ver = "%s%ss" % (varprefix, vars), 'numpy.ma'
+        timer("%(data)s.%(methodname)s(%(args)s)" % locals(), v=ver, nloop=nloop)
+
+    print("-"*25)
+    for ident, varprefix in [('masked', 'nm'), ('normal', '')]:
+        print("%s on large %s arrays" % (methodname, ident))
+        data, ver = "%s%sl" % (varprefix, vars), 'numpy.ma'
+        timer("%(data)s.%(methodname)s(%(args)s)" % locals(), v=ver, nloop=nloop)
+    return
+
+
 def compare_functions_2v(func, nloop=500, test=True,
                          xs=xs, nmxs=nmxs,
                          ys=ys, nmys=nmys,
@@ -133,3 +149,13 @@ if __name__ == '__main__':
     print("-"*50)
     print("where on large arrays")
     timer('numpy.ma.where(nmxl>2,nmxl,nmyl)', 'numpy.ma   ', nloop=100)
+
+    compare_nonma_ma_methods('__getitem__', '0', nloop=1000)
+    compare_nonma_ma_methods('__getitem__', '(0,0)', nloop=1000)
+    compare_nonma_ma_methods('__getitem__', '[0,-1]', nloop=1000)
+    compare_nonma_ma_methods('__setitem__', '0, 17', nloop=1000, test=False)
+    compare_nonma_ma_methods('__setitem__', '(0,0), 17', nloop=1000, test=False)
+
+    compare_nonma_ma_methods('__getitem__', 'slice(0, -1, 1)', nloop=1000)
+    compare_nonma_ma_methods('__getitem__', 'slice(0, -1, 3)', nloop=1000)
+    compare_nonma_ma_methods('__getitem__', 'slice(-1, 0, -2)', nloop=1000)
