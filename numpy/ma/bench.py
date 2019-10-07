@@ -57,7 +57,7 @@ def timer(s, v='', nloop=500, nrep=3):
 
 
 def compare_functions_1v(func, nloop=500,
-                       xs=xs, nmxs=nmxs, xl=xl, nmxl=nmxl):
+                         xs=xs, nmxs=nmxs, xl=xl, nmxl=nmxl):
     funcname = func.__name__
     print("-"*50)
     print("%s on small arrays" % funcname)
@@ -68,6 +68,7 @@ def compare_functions_1v(func, nloop=500,
     module, data = "numpy.ma", "nmxl"
     timer("%(module)s.%(funcname)s(%(data)s)" % locals(), v="%11s" % module, nloop=nloop)
     return
+
 
 def compare_methods(methodname, args, vars='x', nloop=500, test=True,
                     xs=xs, nmxs=nmxs, xl=xl, nmxl=nmxl):
@@ -81,11 +82,12 @@ def compare_methods(methodname, args, vars='x', nloop=500, test=True,
     timer("%(data)s.%(methodname)s(%(args)s)" % locals(), v=ver, nloop=nloop)
     return
 
+
 def compare_functions_2v(func, nloop=500, test=True,
-                       xs=xs, nmxs=nmxs,
-                       ys=ys, nmys=nmys,
-                       xl=xl, nmxl=nmxl,
-                       yl=yl, nmyl=nmyl):
+                         xs=xs, nmxs=nmxs,
+                         ys=ys, nmys=nmys,
+                         xl=xl, nmxl=nmxl,
+                         yl=yl, nmyl=nmyl):
     funcname = func.__name__
     print("-"*50)
     print("%s on small arrays" % funcname)
