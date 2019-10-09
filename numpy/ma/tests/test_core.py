@@ -3825,6 +3825,39 @@ class TestMaskedArrayMathMethods(object):
         assert_equal(test.filled(0), [0, 0, 0])
         assert_equal(test.mask, [1, 1, 1])
 
+    def test_var_dtypes(self):
+        # float types should be preserved
+        for dtype in [np.float16, np.float32, np.float64]:
+            a = array(np.ones((3,3,3), dtype=dtype),
+                      mask=np.zeros((3,3,3)))
+            v = a.var(axis=0)
+            assert_equal(v.dtype, dtype)
+
+            a = array(np.ones((3,3,3), dtype=dtype))
+            v = a.var(axis=0)
+            assert_equal(v.dtype, dtype)
+
+        # integral types should map to float64
+        for dtype in [np.int8, np.uint8, np.uint32, np.int64]:
+            a = array(np.ones((3,3,3), dtype=dtype),
+                      mask=np.zeros((3, 3, 3)))
+            v = a.var(axis=0)
+            assert_equal(v.dtype, np.float64)
+
+            a = array(np.ones((3,3,3), dtype=dtype))
+            v = a.var(axis=0)
+            assert_equal(v.dtype, np.float64)
+
+        # complex types are kept
+        a = array(np.ones((3, 3, 3), dtype=np.complex64),
+                  mask=np.zeros((3, 3, 3)))
+        v = a.var(axis=0)
+        assert_equal(v.dtype, np.complex64)
+
+        a = array(np.ones((3, 3, 3), dtype=np.complex64))
+        v = a.var(axis=0)
+        assert_equal(v.dtype, np.complex64)
+
     def test_diag(self):
         # Test diag
         x = arange(9).reshape((3, 3))
