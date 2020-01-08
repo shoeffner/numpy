@@ -402,8 +402,14 @@ class TestAverage(object):
         # weights dimension does not fit the axis dimension
         assert_raises(ValueError, average, a, axis=0, weights=np.ones(3))
 
-        # Implicit: sum of weights is zero, so the TrueDivision will warn
-        assert_warns(RuntimeWarning, average, a, weights=np.zeros(a.shape))
+    def test_div0_masking(self):
+        # See gh-14668 discussion:
+        # division by 0 should mask a value to retain backwards compatibility
+        x = masked_array([[1, 2]], mask=[[0, 1]])
+        w = masked_array([[0, 0]], mask=[[0, 0]])
+        avg = average(x, weights=w, axis=1)
+        exp = masked_array([9], mask=[True])
+        assert_equal(avg, exp)
 
 
 class TestConcatenator(object):

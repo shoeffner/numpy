@@ -30,7 +30,7 @@ from .core import (
     MaskedArray, MAError, add, array, asarray, concatenate, filled, count,
     getmask, getmaskarray, make_mask_descr, masked, masked_array, mask_or,
     nomask, ones, sort, zeros, getdata, get_masked_subclass, dot,
-    mask_rowcols
+    mask_rowcols, true_divide
     )
 
 import numpy as np
@@ -536,7 +536,7 @@ def average(a, axis=None, weights=None, returned=False):
     """
     Return the weighted average of array over the given axis.
 
-    .. versionadded:: 1.18.0
+    .. versionadded:: 1.18.2
 
     If `weights` is not `None`, masked values are treated as 0 for the
     weighted sum, but as `np.nan` for the scaling operation. The resulting
@@ -562,7 +562,7 @@ def average(a, axis=None, weights=None, returned=False):
 
         The only constraint on `weights` is that `sum(weights)` must not be 0.
 
-        .. versionadded:: 1.18.0
+        .. versionadded:: 1.18.2
 
         If `weights` is a masked array, entries masked by either the mask of `a`
         or the mask of `weights` are not taken into account in the computation.
@@ -630,6 +630,14 @@ def average(a, axis=None, weights=None, returned=False):
     array([False,  True, False, False, False])
     >>> np.ma.average(a, axis=1, weights=w).mask
     array([ True, False])
+
+    >>> x = np.ma.masked_array([[1, 2]], mask=[[0, 1]])
+    >>> w = np.ma.masked_array([[0, 0]], mask=[[0, 0]])
+    >>> np.ma.average(x, weights=w, axis=1)
+    masked_array(data=[--],
+                 mask=[ True],
+           fill_value=1e+20,
+                dtype=float64)
     """
     a = asarray(a)
     m = getmask(a)
@@ -691,7 +699,8 @@ def average(a, axis=None, weights=None, returned=False):
             # hide DIV0 behind np.nan for masked weights
             scl = np.where(avg_mask, np.nan, scl)
         prod = np.multiply(a, wgt, dtype=result_dtype)
-        avg = prod.sum(axis=axis, dtype=result_dtype) / scl
+        avg = true_divide(prod.sum(axis=axis, dtype=result_dtype), scl,
+                          dtype=result_dtype)
 
         # for non-scalars, return a masked array with the new mask
         if avg_mask is not nomask:
