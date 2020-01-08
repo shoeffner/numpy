@@ -536,7 +536,7 @@ def average(a, axis=None, weights=None, returned=False):
     """
     Return the weighted average of array over the given axis.
 
-    .. versionadded:: 1.18.2
+    .. versionchanged:: 1.19.0
 
     If `weights` is not `None`, masked values are treated as 0 for the
     weighted sum, but as `np.nan` for the scaling operation. The resulting
@@ -562,7 +562,7 @@ def average(a, axis=None, weights=None, returned=False):
 
         The only constraint on `weights` is that `sum(weights)` must not be 0.
 
-        .. versionadded:: 1.18.2
+        .. versionchanged:: 1.19.0
 
         If `weights` is a masked array, entries masked by either the mask of `a`
         or the mask of `weights` are not taken into account in the computation.
