@@ -5193,12 +5193,12 @@ class MaskedArray(ndarray):
         # Cast bool, unsigned int, and int to float64 by default
         if dtype is None:
             if issubclass(self.dtype.type, (ntypes.integer, ntypes.bool_)):
-                dtype = ntypes.dtype('f8')
+                dtype = np.float64
             elif issubclass(self.dtype.type, ntypes.float16):
-                dtype = ntypes.dtype('f4')
+                dtype = np.float32
                 is_float16_result = True
             else:
-                dtype = ntypes.dtype(self.dtype)
+                dtype = self.dtype
 
         if self._mask is nomask:
             result = super(MaskedArray, self).mean(axis=axis,
@@ -5209,10 +5209,10 @@ class MaskedArray(ndarray):
             if cnt.shape == () and (cnt == 0):
                 result = masked
             else:
-                result = divide(dsum, cnt, dtype=dtype).view(type(self))
+                result = true_divide(dsum, cnt, dtype=dtype)
 
         if is_float16_result and out is None:
-            result = ntypes.dtype('f2').type(result)
+            result = result.astype(np.float16)
 
         if out is not None:
             out.flat = result
@@ -5286,12 +5286,12 @@ class MaskedArray(ndarray):
         # Cast bool, unsigned int, and int to float64 by default
         if dtype is None:
             if issubclass(self.dtype.type, (ntypes.integer, ntypes.bool_)):
-                dtype = ntypes.dtype('f8')
+                dtype = np.float64
             elif issubclass(self.dtype.type, ntypes.float16):
-                dtype = ntypes.dtype('f4')
+                dtype = np.float32
                 is_float16_result = True
             else:
-                dtype = ntypes.dtype(self.dtype)
+                dtype = self.dtype
 
         # Easy case: nomask, business as usual
         if self._mask is nomask:
@@ -5302,7 +5302,7 @@ class MaskedArray(ndarray):
                     out.__setmask__(nomask)
                 return out
             if is_float16_result:
-                ret = ntypes.dtype('f2').type(ret)
+                ret = ret.astype(np.float16)
             return ret
 
         # Some data are masked, yay!
@@ -5314,10 +5314,10 @@ class MaskedArray(ndarray):
             danom *= danom
 
         dsum = danom.sum(axis, **kwargs)
-        dvar = divide(dsum, cnt, dtype=dtype).view(type(self))
+        dvar = true_divide(dsum, cnt, dtype=dtype)
 
         if is_float16_result and out is None:
-            dvar = ntypes.dtype('f2').type(dvar)
+            dvar = dvar.astype(np.float16)
 
         # Apply the mask if it's not a scalar
         if dvar.ndim:
