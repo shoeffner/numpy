@@ -5287,9 +5287,6 @@ class MaskedArray(ndarray):
         if dtype is None:
             if issubclass(self.dtype.type, (ntypes.integer, ntypes.bool_)):
                 dtype = np.float64
-            elif issubclass(self.dtype.type, ntypes.float16):
-                dtype = np.float32
-                is_float16_result = True
             else:
                 dtype = self.dtype
 
@@ -5315,9 +5312,6 @@ class MaskedArray(ndarray):
 
         dsum = danom.sum(axis, **kwargs)
         dvar = true_divide(dsum, cnt, dtype=dtype)
-
-        if is_float16_result and out is None:
-            dvar = dvar.astype(np.float16)
 
         # Apply the mask if it's not a scalar
         if dvar.ndim:
