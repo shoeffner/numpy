@@ -3944,7 +3944,7 @@ class TestMaskedArrayMathMethods(object):
 
     def test_mean_as_ndarray(self):
         # Test if mean behaves like ndarray
-        for dtype in [np.float16, np.float32, np.float64]:
+        for dtype in [np.float16, np.float32, np.double, np.longdouble]:
             x = np.arange(-30, 30).astype(dtype)
             mx = array(x, mask=np.zeros(x.shape, dtype=bool))
             assert_equal(x.mean(), mx.mean())
@@ -3955,7 +3955,7 @@ class TestMaskedArrayMathMethods(object):
 
     def test_var_as_ndarray(self):
         # Test if var behaves like ndarray
-        for dtype in [np.float16, np.float32, np.float64]:
+        for dtype in [np.float16, np.float32, np.double, np.longdouble]:
             x = np.arange(-30, 30).astype(dtype)
             mx = array(x, mask=np.zeros(x.shape, dtype=bool))
             assert_equal(x.var(), mx.var())
